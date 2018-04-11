@@ -31,6 +31,9 @@ end
 function main() 
     numbers = readInput("../utils/prefixTest1.txt")
     tic()
+    toc()
+
+    tic()
     result = prefixSum(numbers, length(numbers))
     toc()
     println(result)

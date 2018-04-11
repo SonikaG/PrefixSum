@@ -90,11 +90,10 @@ int* readInput(char* filename, int* num_points){
 
 //doesn't do anything rn
 int main(int argc, char** argv) {
-
     char* inputfile = argv[1];
     int num_points;
     int* values = readInput(inputfile, &num_points);
-    printArray(values, num_points);
+//    printArray(values, num_points);
     int * r = prefixSum(values, num_points);
     printArray(r, num_points);
 

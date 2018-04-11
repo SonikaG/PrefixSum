@@ -1,5 +1,7 @@
+#= An implementation of the linear algorithm of prefix sum in Julia
+Authors: Madeline Stager and Sonika Garg =#
 
-
+#prefixSum, takes an input array and and input size (int)
 function prefixSum(input, input_size)
     result = Array{Int64, 1}(input_size)
     for i = 1:input_size
@@ -25,7 +27,34 @@ function arrayEqual(a, b)
     end
 end
 
+#main function 
+function main() 
+    numbers = readInput("../utils/prefixTest1.txt")
+    tic()
+    result = prefixSum(numbers, length(numbers))
+    toc()
+    println(result)
+end 
 
+#function to read in the values from a file 
+function readInput(fileName)
+    f = open(fileName)
+    num_points = parse(Int, readline(f))
+    #println(num_points)
+    array = readline(f)
+    #println(array)
+    values = split(array, " ")
+    #println(values)
+    numbers = Array{Int64, 1}(num_points)
+    for i = 1:length(values)-1
+        numbers[i] = parse(Int, values[i])
+    end
+    #println(numbers)
+    close(f)
+    return numbers
+end
+
+#=
 # test 1
 # answer should be [1, 3, 6, 10, 15]
 x = [1 2 3 4 5]
@@ -46,6 +75,6 @@ if arrayEqual(r,  [-2, 14, 18, 19, 26, 23, 31, 34, 34, 28])
     println("SUCESS")
 else
     println("FAILED")
-end
-    
+end =#
 
+main()

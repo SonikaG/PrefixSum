@@ -13,6 +13,7 @@ MAX_VALUE = 1000000
 def createFile(numValues, fileName):
     file = open(fileName, "w")
     
+    file.write(str(numValues) + "\n")
     for i in range(numValues):
         num = random.randint(MIN_VALUE, MAX_VALUE)
         file.write(str(num) + " ")

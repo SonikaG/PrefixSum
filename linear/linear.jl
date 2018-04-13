@@ -28,8 +28,11 @@ function arrayEqual(a, b)
 end
 
 #main function 
-function main() 
-    numbers = readInput("../utils/prefixTest1.txt")
+function main()
+    inputFile = ARGS[1]
+
+
+    numbers = readInput(inputFile)
     tic()
     toc()
 

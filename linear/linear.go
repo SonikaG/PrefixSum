@@ -4,6 +4,7 @@ import "io/ioutil"
 import "strings"
 import "strconv"
 import "time"
+import "flag"
 
 //prefix sum method
 func prefixSum (input []int64, input_size int) ([]int64) {
@@ -45,6 +46,12 @@ func readFile(input string) ([]int64){
 
 //main method 
 func main (){
+
+
+    inputFile := flag.String("input", "test", "name of input file")
+    flag.Parse()
+    fmt.Println(*inputFile)
+
     /*testOne := []int64{1, 2, 3, 4, 5}
     result := prefixSum(testOne, len(testOne))
     fmt.Println(result)
@@ -52,7 +59,9 @@ func main (){
     testTwo := []int64{-2, 16, 4, 1, 7, -3, 8, 3, 0, -6}
     resultTwo := prefixSum(testTwo, len(testTwo))
     fmt.Println(resultTwo)*/
-    numbers := readFile("../utils/prefixTest1.txt")
+
+
+    numbers := readFile(*inputFile)
     start := time.Now()
     result := prefixSum(numbers, len(numbers))
     elapsed := time.Since(start)

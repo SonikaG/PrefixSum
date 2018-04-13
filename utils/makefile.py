@@ -23,7 +23,10 @@ def createFile(numValues, fileName):
 
 
 
-createFile(6, "prefixTest1.txt")
+createFile(5, "prefix5.txt")
+createFile(20, "prefix20.txt")
+createFile(100, "prefix100.txt")
+createFile(1000, "prefix1000.txt")
 
     
 

@@ -37,8 +37,16 @@ function main()
     toc()
 
     tic()
+    toc()
+
+    tic()
     result = prefixSum(numbers, length(numbers))
     toc()
+
+    tic()
+    result = prefixSum(numbers, length(numbers))
+    toc()
+
     println(result)
 end 
 

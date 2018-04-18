@@ -11,21 +11,56 @@ Authors: Sonika Garg and Madeline Stager
 
 //global variables
 int * result;
+int size;
+
+//global barrier
+pthread_barrier_t bar;
+
+//method to print an array
+void printArray (int *input, int input_size){
+ int i;
+ printf("[");
+ for (i = 0; i < input_size-1; i++){
+   printf("%d, ", input[i]);
+ }
+ printf("%d]\n", input[input_size-1]);
+}
 
 //helper function that each thread executes
-void * strideHelper
+void * strideHelper(void *arg){
+  int stride;
+  int *my_id = (int *)arg;
+  //printf("my id: %d\n", *my_id);
+  for (stride = 1; stride <= (size-1); stride = stride * 2){
+    int my_value = result[*my_id];
+    //printf("my value and my id: %d, %d\n", my_value, *my_id);
+    pthread_barrier_wait(&bar);
+    if(*my_id + stride < size){
+      result[*my_id + stride] += my_value;
+    }  
+    pthread_barrier_wait(&bar);
+  } 
+}
 
 //the stride algorithm implementation of prefix sum
 //takes the input array and its size as parameters
 int * prefixSumStride (int *input, int input_size){
   pthread_t threads[input_size-1];
   int k;
+  size = input_size;
   result = malloc(sizeof(int)*input_size);
   memcpy(result, input, sizeof(int)*input_size);
+  if(pthread_barrier_init(&bar, NULL, input_size-1)){
+    printf("error, barrier did not work");
+    return NULL;
+  }
   clock_t start = clock();
   int i;
   for (i = 0; i < input_size-1; i++){
-    pthread_create(&threads[i], NULL, strideHelper, (void*)(&i)));
+    int *thread_id = (int *)malloc(sizeof(int));
+    *thread_id = i;
+    //printf("value of i %d\n", i);
+    pthread_create(&threads[i], NULL, strideHelper, (void*)(thread_id));
   }
 
   //join all the threads
@@ -34,10 +69,10 @@ int * prefixSumStride (int *input, int input_size){
         if(pthread_join(threads[j], NULL)){
             printf("error\n");
             fprintf(stderr, "Error joining thread\n");
-            return -2;
+            return NULL;
         }
   }
-
+  
 }
 
 //the linear algorithm implementation of prefix sum
@@ -61,15 +96,6 @@ int * prefixSumLinear (int *input, int input_size){
   return result;
 }
 
-//method to print an array
-void printArray (int *input, int input_size){
- int i;
- printf("[");
- for (i = 0; i < input_size-1; i++){
-   printf("%d, ", input[i]);
- }
- printf("%d]\n", input[input_size-1]);
-}
 
 char* loadInputFile(char* filename){
     FILE* inputFile = fopen(filename, "r");
@@ -128,10 +154,11 @@ int main(int argc, char** argv) {
 //    printArray(values, num_points);
     int * r = prefixSumLinear(values, num_points);
     printArray(r, num_points);
-
+    prefixSumStride(values, num_points);
+    printArray(result, num_points);
 //  int test1 [5] = {1, 2, 3, 4, 5};
 //  int length1 = sizeof(test1)/sizeof(int);
-//  int *result = prefixSum(test1, length1);
+//  int *result = prefixSumStride(test1, length1);
 //
 //  int test2[10] = {-2, 16, 4, 1, 7, -3, 8, 3, 0, -6};
 //  int length2 = sizeof(test2)/sizeof(int);

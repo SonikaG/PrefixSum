@@ -3,6 +3,7 @@ Authors: Madeline Stager and Sonika Garg =#
 
 #prefixSum, takes an input array and and input size (int)
 function prefixSum(input, input_size)
+    tic()
     result = Array{Int64, 1}(input_size)
     for i = 1:input_size
         if i > 1
@@ -11,6 +12,7 @@ function prefixSum(input, input_size)
             result[i] = input[i]
         end
     end
+    toc()
     result
 end
 
@@ -33,19 +35,19 @@ function main()
 
 
     numbers = readInput(inputFile)
-    tic()
+#=    tic()
     toc()
 
     tic()
     toc()
+
+    tic() =#
+    result = prefixSum(numbers, length(numbers))
+#=  toc()
 
     tic()
     result = prefixSum(numbers, length(numbers))
-    toc()
-
-    tic()
-    result = prefixSum(numbers, length(numbers))
-    toc()
+    toc() =#
 
     println(result)
 end 

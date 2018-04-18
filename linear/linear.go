@@ -8,6 +8,7 @@ import "flag"
 
 //prefix sum method
 func prefixSum (input []int64, input_size int) ([]int64) {
+    start := time.Now()
     result := make([]int64, input_size)
     for i:= 0; i < input_size; i++{
         if i == 0{
@@ -16,6 +17,8 @@ func prefixSum (input []int64, input_size int) ([]int64) {
             result[i] = result[i-1] + input [i]
         }
     }
+    elapsed := time.Since(start)
+    fmt.Printf("elapsed time: %.9f\n", elapsed.Seconds())
     return result;
 }
 
@@ -50,7 +53,7 @@ func main (){
 
     inputFile := flag.String("input", "test", "name of input file")
     flag.Parse()
-    fmt.Println(*inputFile)
+//    fmt.Println(*inputFile)
 
     /*testOne := []int64{1, 2, 3, 4, 5}
     result := prefixSum(testOne, len(testOne))
@@ -62,9 +65,9 @@ func main (){
 
 
     numbers := readFile(*inputFile)
-    start := time.Now()
+//    start := time.Now()
     result := prefixSum(numbers, len(numbers))
-    elapsed := time.Since(start)
-    fmt.Printf("elapsed time: %.9f\n", elapsed.Seconds())
+//    elapsed := time.Since(start)
+//    fmt.Printf("elapsed time: %.9f\n", elapsed.Seconds())
     fmt.Println(result)
 }

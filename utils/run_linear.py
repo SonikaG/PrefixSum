@@ -1,6 +1,6 @@
 import subprocess
 
-cCmplCmd = "gcc ../linear/linear.c -o clinear"
+cCmplCmd = "gcc ../linear/linear.c -o clinear -pthread"
 cRunCmd = "./clinear "
 
 juliaRunCmd = "julia ../linear/linear.jl "
@@ -12,21 +12,42 @@ numRuns = 20
 inputFiles = ["prefix5.txt", "prefix20.txt", "prefix100.txt", "prefix1000.txt"]
 
 def main():
-    run_c_linear()
-    run_julia_linear()
-    run_go_linear()
+    run("C LINEAR", cRunCmd, True)
+    run("JULIA LINEAR", juliaRunCmd, False)
+    run("GO LINEAR", goRunCmd, False)
+
+    #run("C STRIDE", cRunStride, True)
 
 def get_time(p, lineNum):
     output = str(p.stdout, 'utf-8')
     # print(output)
     line = output.split("\n")[lineNum]
-    print(output.split("\n")[:-2])
-    print(line)
+    #print(output.split("\n")[:-2])
+    #print(line)
     timeString = line.split()[2]
     time = float(timeString)
     # print(time)
     return time
 
+def run(run_type, runCmd, shouldCompile):
+    print("RUNNING " + run_type + "\n")
+    if shouldCompile:
+        p = subprocess.run(cCmplCmd, shell=True, stdout=subprocess.PIPE)
+        output = str(p.stdout, 'utf-8')
+        print(output)
+
+    for file_name in inputFiles:
+        totalTime = 0
+        for i in range(0, numRuns):
+            p = subprocess.run(runCmd+file_name, shell=True, stdout=subprocess.PIPE)
+            time = get_time(p, 0)
+            totalTime += time
+        averageTime = totalTime/numRuns
+        print("averageTime: " + str(averageTime) + " for file " + file_name + "\n")
+    print("DONE RUNNING " + run_type + "\n")
+
+
+"""
 def run_go_linear():
     print("RUNNING GO\n")
     for file_name in inputFiles:
@@ -68,6 +89,6 @@ def run_c_linear():
         averageTime = totalTime / numRuns
         print("averageTime: " + str(averageTime) + " for file " + file_name + "\n")
     print("DONE RUNNING C\n")
-
+"""
 if __name__ == '__main__':
     main()

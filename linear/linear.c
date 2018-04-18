@@ -72,6 +72,9 @@ int * prefixSumStride (int *input, int input_size){
             return NULL;
         }
   }
+  clock_t end = clock();
+  double elapsed_time = (double)(end-start)/CLOCKS_PER_SEC;
+  printf("elapsed time: %f\n", elapsed_time);  
   
 }
 

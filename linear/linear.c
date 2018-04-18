@@ -7,11 +7,43 @@ Authors: Sonika Garg and Madeline Stager
 #include "stdlib.h"
 #include <string.h>
 #include <time.h>
+#include <pthread.h>
 
-//method that takes an array of ints and 
-//returns an array of equal size of the calculated prefix sums
+//global variables
+int * result;
+
+//helper function that each thread executes
+void * strideHelper
+
+//the stride algorithm implementation of prefix sum
+//takes the input array and its size as parameters
+int * prefixSumStride (int *input, int input_size){
+  pthread_t threads[input_size-1];
+  int k;
+  result = malloc(sizeof(int)*input_size);
+  memcpy(result, input, sizeof(int)*input_size);
+  clock_t start = clock();
+  int i;
+  for (i = 0; i < input_size-1; i++){
+    pthread_create(&threads[i], NULL, strideHelper, (void*)(&i)));
+  }
+
+  //join all the threads
+  int j;
+  for (j = 0; j < input_size-1; j++){
+        if(pthread_join(threads[j], NULL)){
+            printf("error\n");
+            fprintf(stderr, "Error joining thread\n");
+            return -2;
+        }
+  }
+
+}
+
+//the linear algorithm implementation of prefix sum
+//takes the input array and its size as parameters
 //NOT SURE IF THIS WORKS YET
-int * prefixSum (int *input, int input_size){
+int * prefixSumLinear (int *input, int input_size){
   clock_t start = clock();
   int i;
   int *result = malloc(input_size *sizeof(int));
@@ -94,7 +126,7 @@ int main(int argc, char** argv) {
     int num_points;
     int* values = readInput(inputfile, &num_points);
 //    printArray(values, num_points);
-    int * r = prefixSum(values, num_points);
+    int * r = prefixSumLinear(values, num_points);
     printArray(r, num_points);
 
 //  int test1 [5] = {1, 2, 3, 4, 5};

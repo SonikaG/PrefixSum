@@ -6,8 +6,36 @@ import "strconv"
 import "time"
 import "flag"
 
+var result []int64
+
+func strideHelper(thread_id int, channel chan string){
+    //fmt.Println("hello")
+    fmt.Println(thread_id)
+    //time.Sleep(50)
+
+    channel <- "ping"
+}
+
+
+func prefixSumStride(input []int64, input_size int){
+    stringChan := make(chan string)
+    result = input
+    fmt.Println("here")
+    for i:=0; i<input_size-1; i++ {
+        fmt.Println("in the loop")
+        go strideHelper(i, stringChan)
+    }
+
+    for i:=0; i<input_size-1; i++ {
+        msg := <-stringChan
+        if msg != "ping" {
+            fmt.Println("WRONG MESSAGE")
+        }
+    }
+}
+
 //prefix sum method
-func prefixSum (input []int64, input_size int) ([]int64) {
+func prefixSumLinear (input []int64, input_size int) ([]int64) {
     start := time.Now()
     result := make([]int64, input_size)
     for i:= 0; i < input_size; i++{
@@ -66,8 +94,12 @@ func main (){
 
     numbers := readFile(*inputFile)
 //    start := time.Now()
-    result := prefixSum(numbers, len(numbers))
+    result := prefixSumLinear(numbers, len(numbers))
 //    elapsed := time.Since(start)
 //    fmt.Printf("elapsed time: %.9f\n", elapsed.Seconds())
     fmt.Println(result)
+
+    prefixSumStride(numbers, len(numbers))
+    fmt.Println("done with stride")
+
 }

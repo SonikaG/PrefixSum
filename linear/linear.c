@@ -74,8 +74,7 @@ int * prefixSumStride (int *input, int input_size){
   }
   clock_t end = clock();
   double elapsed_time = (double)(end-start)/CLOCKS_PER_SEC;
-  printf("elapsed time: %f\n", elapsed_time);  
-  
+  printf("elapsed time: %f\n", elapsed_time);    
 }
 
 //the linear algorithm implementation of prefix sum
@@ -154,11 +153,15 @@ int main(int argc, char** argv) {
     char* inputfile = argv[1];
     int num_points;
     int* values = readInput(inputfile, &num_points);
-//    printArray(values, num_points);
-    int * r = prefixSumLinear(values, num_points);
-    printArray(r, num_points);
-    prefixSumStride(values, num_points);
-    printArray(result, num_points);
+//    printArray(values, num_points); 
+    if(strcmp(argv[2],"linear") == 0){
+      int * r = prefixSumLinear(values, num_points);
+      printArray(r, num_points);
+    }
+    else if(strcmp(argv[2],"stride") == 0){
+      prefixSumStride(values, num_points);
+      printArray(result, num_points);
+    }
 //  int test1 [5] = {1, 2, 3, 4, 5};
 //  int length1 = sizeof(test1)/sizeof(int);
 //  int *result = prefixSumStride(test1, length1);

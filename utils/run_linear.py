@@ -12,11 +12,11 @@ numRuns = 20
 inputFiles = ["prefix5.txt", "prefix20.txt", "prefix100.txt", "prefix1000.txt"]
 
 def main():
-    run("C LINEAR", cRunCmd, True)
-    run("JULIA LINEAR", juliaRunCmd, False)
-    run("GO LINEAR", goRunCmd, False)
+    run("C LINEAR", cRunCmd, True, "linear")
+    run("JULIA LINEAR", juliaRunCmd, False, "linear")
+    run("GO LINEAR", goRunCmd, False, "linear")
 
-    #run("C STRIDE", cRunStride, True)
+    run("C STRIDE", cRunCmd, True, "stride")
 
 def get_time(p, lineNum):
     output = str(p.stdout, 'utf-8')
@@ -29,7 +29,7 @@ def get_time(p, lineNum):
     # print(time)
     return time
 
-def run(run_type, runCmd, shouldCompile):
+def run(run_type, runCmd, shouldCompile, algo_type):
     print("RUNNING " + run_type + "\n")
     if shouldCompile:
         p = subprocess.run(cCmplCmd, shell=True, stdout=subprocess.PIPE)
@@ -39,7 +39,7 @@ def run(run_type, runCmd, shouldCompile):
     for file_name in inputFiles:
         totalTime = 0
         for i in range(0, numRuns):
-            p = subprocess.run(runCmd+file_name, shell=True, stdout=subprocess.PIPE)
+            p = subprocess.run(runCmd + file_name + " " + algo_type, shell=True, stdout=subprocess.PIPE)
             time = get_time(p, 0)
             totalTime += time
         averageTime = totalTime/numRuns

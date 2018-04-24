@@ -1,8 +1,66 @@
 #= An implementation of the linear algorithm of prefix sum in Julia
 Authors: Madeline Stager and Sonika Garg =#
 
-#prefixSum, takes an input array and and input size (int)
-function prefixSum(input, input_size)
+#=
+function barrierInit(threads)
+    global arrival = Base.Semaphore(1)
+    global departure = Base.Semaphore(1)
+    global counter = 0
+    global numThreads = threads
+    Base.acquire(departure)
+end
+
+function barrierWait()
+    Base.acquire(arrival)
+    counter = counter + 1
+    if counter < numThreads
+        Base.release(arrival)
+    else
+        Base.release(departure)
+    end
+    Base.acquire(departure)
+    counter = counter - 1
+    if counter > 0
+        Base.release(departure)
+    else
+        Base.release(arrival)
+    end
+end
+
+=#
+
+@everywhere function strideHelper(id)
+    stride = 1
+    while stride<10
+        println("hello 1 ", stride, " ", id)
+        #barrierWait()
+        println("hello 2 ", stride, " ", id)
+        #barrierWait()
+        println("hello 3 ", stride, " ", id)
+        stride *= 2
+    end
+end
+
+
+function prefixSumStride()
+    println(Threads.nthreads())
+    #barrierInit(4)
+    threads = Array{Future, 1}(5)
+    for i = 1:5
+        println("starting ", i)
+        threads[i] = remotecall(strideHelper, i, i)
+        println("done starting ", i)
+    end
+
+    for i = 1:5
+        wait(threads[i])
+    end
+end
+
+
+
+#prefixSum linear implementation, takes an input array and and input size (int)
+function prefixSumLinear(input, input_size)
     tic()
     result = Array{Int64, 1}(input_size)
     for i = 1:input_size
@@ -15,6 +73,9 @@ function prefixSum(input, input_size)
     toc()
     result
 end
+
+#prefixSum stride implementation
+
 
 function arrayEqual(a, b)
     if length(a) != length(b)
@@ -35,21 +96,25 @@ function main()
 
 
     numbers = readInput(inputFile)
-#=    tic()
+#=  tic()
     toc()
 
     tic()
     toc()
 
     tic() =#
-    result = prefixSum(numbers, length(numbers))
+    #the line that is actually running
+    result = prefixSumLinear(numbers, length(numbers))
 #=  toc()
 
     tic()
-    result = prefixSum(numbers, length(numbers))
+    result = prefixSumLinear(numbers, length(numbers))
     toc() =#
 
     println(result)
+
+    prefixSumStride()
+
 end 
 
 #function to read in the values from a file 

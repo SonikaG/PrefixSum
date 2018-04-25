@@ -1,7 +1,8 @@
 #= An implementation of the linear algorithm of prefix sum in Julia
 Authors: Madeline Stager and Sonika Garg =#
 
-#=
+
+
 function barrierInit(threads)
     global arrival = Base.Semaphore(1)
     global departure = Base.Semaphore(1)
@@ -10,7 +11,8 @@ function barrierInit(threads)
     Base.acquire(departure)
 end
 
-function barrierWait()
+@everywhere function barrierWait(arrival, departure, counter, numThreads)
+    println(counter)
     Base.acquire(arrival)
     counter = counter + 1
     if counter < numThreads
@@ -27,15 +29,15 @@ function barrierWait()
     end
 end
 
-=#
 
-@everywhere function strideHelper(id)
+
+@everywhere function strideHelper(id, arrival, departure, counter, numThreads)
     stride = 1
     while stride<10
         println("hello 1 ", stride, " ", id)
-        #barrierWait()
+        barrierWait(arrival, departure, counter, numThreads)
         println("hello 2 ", stride, " ", id)
-        #barrierWait()
+        barrierWait(arrival, departure, counter, numThreads)
         println("hello 3 ", stride, " ", id)
         stride *= 2
     end
@@ -44,14 +46,15 @@ end
 
 function prefixSumStride()
     println(Threads.nthreads())
-    #barrierInit(4)
+    barrierInit(5)
     threads = Array{Future, 1}(5)
-    for i = 1:5
+    for i = 2:6
         println("starting ", i)
-        threads[i] = remotecall(strideHelper, i, i)
+        threads[i-1] = remotecall(strideHelper, i, i-1, arrival, departure, counter, 5)
         println("done starting ", i)
     end
 
+    println(counter)
     for i = 1:5
         wait(threads[i])
     end

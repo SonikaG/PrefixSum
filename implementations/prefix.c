@@ -8,10 +8,13 @@ Authors: Sonika Garg and Madeline Stager
 #include <string.h>
 #include <time.h>
 #include <pthread.h>
+#include <math.h>
 
 //global variables
 int * result;
 int size;
+int ** tree_new;
+int ** tree_old;
 
 //global barrier
 pthread_barrier_t bar;
@@ -24,6 +27,18 @@ void printArray (int *input, int input_size){
    printf("%d, ", input[i]);
  }
  printf("%d]\n", input[input_size-1]);
+}
+
+//the tree (up-down) algorithm implementation of prefix sum
+//takes the input array and its size as parameters
+void * prefixSumTree(int *input, int input_size){
+  int i;
+  double depth = log(input_size)/log(2);
+  int **ar = (int **)malloc(sizeof(int *) * (int)(ceil(depth)));
+  for (i = 0; i < ceil(depth); i++){
+    int size = input_size*1.0/(pow(2.0,i));
+    ar[i] = (int *)malloc(sizeof(int) * size);
+  }
 }
 
 //helper function that each thread executes

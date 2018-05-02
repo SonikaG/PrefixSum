@@ -5,8 +5,10 @@ Authors: Madeline Stager and Sonika Garg
 
 import random
 
-MIN_VALUE = -1000000
-MAX_VALUE = 1000000
+# MIN_VALUE = -1000000
+# MAX_VALUE = 1000000
+MIN_VALUE = -1000
+MAX_VALUE = 1000
 
 
 #method to create a file (named fileName) of numValues length and random data
@@ -23,10 +25,13 @@ def createFile(numValues, fileName):
 
 
 
-createFile(5, "prefix5.txt")
-createFile(20, "prefix20.txt")
-createFile(100, "prefix100.txt")
-createFile(1000, "prefix1000.txt")
+# createFile(5, "prefix5.txt")
+# createFile(20, "prefix20.txt")
+# createFile(100, "prefix100.txt")
+# createFile(1000, "prefix1000.txt")
+# createFile(100000, "prefix100000.txt")
+# createFile(1000000, "prefix1000000.txt")
+createFile(10000000, "prefix10000000.txt")
 
     
 

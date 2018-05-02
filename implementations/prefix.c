@@ -19,15 +19,17 @@ int size;
 //global barrier
 pthread_barrier_t bar;
 
+int* start;
+int* end;
 
 struct fastPrefixArgs {
     int thread_id;
-    int start;
-    int range;
+//    int start;
+//    int range;
 };
 
 
-int * prefixSumLinear (int *input, int input_size);
+void prefixSumLinear (int *input, int input_size);
 
 
 //method to print an array
@@ -40,21 +42,23 @@ void printArray (int *input, int input_size){
  printf("%d]\n", input[input_size-1]);
 }
 
-void fastHelper(void *arguments){
-    struct fastPrefixArgs args = *((struct fastPrefixArgs*)arguments);
-    int* output = prefixSumLinear(&result[args.start], args.range);
+void * fastHelper(void *arguments){
+    int thread_id = *((int*)arguments);
+    prefixSumLinear(&result[start[thread_id]], end[thread_id] - start[thread_id]);
     pthread_barrier_wait(&bar);
-    printf("waiting from thread %d\n", args.thread_id);
-//    pthread_barrier_wait(&bar);
+    //read values from previous chunks to know what correction should be added
+    pthread_barrier_wait(&bar);
+    //add the correction to each number
 
+    return NULL;
 }
 
 void prefixSumFast(int *input, int input_size){
-    int num_threads = 8;
+    int num_threads = 1;
     pthread_t threads[num_threads];
 
-    result = malloc(sizeof(int)*input_size);
-    memcpy(result, input, sizeof(int)*input_size);
+//    result = malloc(sizeof(int)*input_size);
+//    memcpy(result, input, sizeof(int)*input_size);
 
     struct fastPrefixArgs* arguments = malloc(sizeof(struct fastPrefixArgs)*num_threads);
 
@@ -62,13 +66,18 @@ void prefixSumFast(int *input, int input_size){
     int correction = 0;
     int i;
     for (i=0; i<num_threads; i++){
-        arguments[i].thread_id = i;
-        arguments[i].start = (input_size/num_threads)*i + correction;
-        if (input_size % num_threads != 0 && i < input_size % num_threads) {
-            correction++;
+        if (i>0){
+            start[i] = end[i-1]+1;
+        }else{
+            start[i] = 0;
         }
-        arguments[i].range = (input_size / num_threads) + correction;
-
+        if (input_size % num_threads != 0 && i < input_size % num_threads) {
+            correction = 1;
+        }else {
+            correction = 0;
+        }
+         end[i] = start[i] + (input_size / num_threads) + correction;
+        printf("thead %d starts at %d and ends at %d\n", i, start[i], end[i]);
     }
 
     if(pthread_barrier_init(&bar, NULL, num_threads)){
@@ -76,15 +85,19 @@ void prefixSumFast(int *input, int input_size){
         return;
     }
 
+
     clock_t start = clock();
 //    int i;
-    for (i = 0; i < input_size-1; i++){
-        pthread_create(&threads[i], NULL, fastHelper, (void*)(&arguments[i]));
+    for (i = 0; i < num_threads; i++){
+        int* thread_id = malloc(sizeof(int));
+        *thread_id = i;
+        pthread_create(&threads[i], NULL, fastHelper, (void*)(thread_id));
     }
+//    printf("all threads started\n");
 
     //join all the threads
       int j;
-      for (j = 0; j < input_size-1; j++){
+      for (j = 0; j < num_threads; j++){
             if(pthread_join(threads[j], NULL)){
                 printf("error\n");
                 fprintf(stderr, "Error joining thread\n");
@@ -165,22 +178,24 @@ int * prefixSumStride (int *input, int input_size){
 //the linear algorithm implementation of prefix sum
 //takes the input array and its size as parameters
 //NOT SURE IF THIS WORKS YET
-int * prefixSumLinear (int *input, int input_size){
+//__attribute__ ((optimize(1)))
+void prefixSumLinear (int *input, int input_size) {
+//  printArray(input, input_size);
+//  int *result = malloc(input_size *sizeof(int));
   clock_t start = clock();
   int i;
-  int *result = malloc(input_size *sizeof(int));
   for (i = 0; i < input_size; i++) {
     if (i > 0){
       result[i] = result [i-1] + input[i];
     }
     else{
     result[i] = input [i];
-    } 
+    }
   }
   clock_t end = clock();
-   double elapsed_time = (double)(end-start)/CLOCKS_PER_SEC;
+  double elapsed_time = (double)(end-start)/CLOCKS_PER_SEC;
   printf("linear elapsed time: %f\n", elapsed_time);
-  return result;
+  return;
 }
 
 
@@ -238,14 +253,21 @@ int main(int argc, char** argv) {
     char* inputfile = argv[1];
     int num_points;
     int* values = readInput(inputfile, &num_points);
-//    printArray(values, num_points); 
+//    printArray(values, num_points);
+    result = malloc(sizeof(int)*num_points);
+    memcpy(result, values, sizeof(int)*num_points);
+
+    start = malloc(sizeof(int)*1);
+    end = malloc(sizeof(int)*1);
+
+
     if(strcmp(argv[2],"linear") == 0){
-      int * r = prefixSumLinear(values, num_points);
-      printArray(r, num_points);
+      prefixSumLinear(values, num_points);
+      printArray(result, num_points);
     }
     else if(strcmp(argv[2],"stride") == 0){
       prefixSumStride(values, num_points);
-      printArray(result, num_points);
+//      printArray(result, num_points);
     }else if(strcmp(argv[2], "fast") == 0){
         prefixSumFast(values, num_points);
         printArray(result, num_points);

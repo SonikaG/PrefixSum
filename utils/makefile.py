@@ -31,7 +31,7 @@ def createFile(numValues, fileName):
 # createFile(1000, "prefix1000.txt")
 # createFile(100000, "prefix100000.txt")
 # createFile(1000000, "prefix1000000.txt")
-createFile(10000000, "prefix10000000.txt")
-
+# createFile(10000000, "prefix10000000.txt")
+createFile(100000000, "prefix100000000.txt")
     
 

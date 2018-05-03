@@ -1,7 +1,7 @@
 import subprocess
 
-cCmplCmd = "gcc ../linear/linear.c -o clinear -pthread"
-cRunCmd = "./clinear "
+cCmplCmd = "gcc ../implementations/prefix.c -o prefix -pthread"
+cRunCmd = "./prefix "
 
 juliaRunCmd = "julia ../linear/linear.jl "
 
@@ -9,22 +9,24 @@ goRunCmd = "go run ../linear/linear.go -input="
 
 numRuns = 20
 
-inputFiles = ["prefix5.txt", "prefix20.txt", "prefix100.txt", "prefix1000.txt"]
+inputFiles = ["prefix5.txt", "prefix20.txt", "prefix100.txt", "prefix1000.txt", "prefix100000.txt", "prefix1000000.txt", "prefix10000000.txt"]
 
 def main():
     run("C LINEAR", cRunCmd, True, "linear")
-    run("JULIA LINEAR", juliaRunCmd, False, "linear")
-    run("GO LINEAR", goRunCmd, False, "linear")
+    # todo need to timing for fast
+    run("C FAST", cRunCmd, True, "fast")
+    # run("JULIA LINEAR", juliaRunCmd, False, "linear")
+    # run("GO LINEAR", goRunCmd, False, "linear")
 
-    run("C STRIDE", cRunCmd, True, "stride")
+    # run("C STRIDE", cRunCmd, True, "stride")
 
 def get_time(p, lineNum):
     output = str(p.stdout, 'utf-8')
     # print(output)
     line = output.split("\n")[lineNum]
     #print(output.split("\n")[:-2])
-    #print(line)
-    timeString = line.split()[2]
+    print(line)
+    timeString = line.split()[-1]
     time = float(timeString)
     # print(time)
     return time

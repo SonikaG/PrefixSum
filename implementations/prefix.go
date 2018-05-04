@@ -10,7 +10,7 @@ import "sync"
 
 
 // NOTE need to set GOPATH to use barrier
-// export GOPATH="/u/mstager/Concurrency/FinalProject/PrefixSum/implementations"
+// export GOPATH="~/your_path_to/PrefixSum/implementations"
 
 
 //var result []int64

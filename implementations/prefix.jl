@@ -2,6 +2,7 @@
 Authors: Madeline Stager and Sonika Garg =#
 
 
+#=
 
 function barrierInit(threads)
     global arrival = Base.Semaphore(1)
@@ -60,7 +61,7 @@ function prefixSumStride()
     end
 end
 
-
+=#
 
 #prefixSum linear implementation, takes an input array and and input size (int)
 function prefixSumLinear(input, input_size)
@@ -77,7 +78,6 @@ function prefixSumLinear(input, input_size)
     result
 end
 
-#prefixSum stride implementation
 
 
 function arrayEqual(a, b)
@@ -114,9 +114,9 @@ function main()
     result = prefixSumLinear(numbers, length(numbers))
     toc() =#
 
-    println(result)
+    #println(result)
 
-    prefixSumStride()
+   # prefixSumStride()
 
 end 
 
@@ -156,7 +156,7 @@ x = [-2 16 4 1 7 -3 8 3 0 -6]
 r = prefixSum(x, length(x))
 println(r)
 if arrayEqual(r,  [-2, 14, 18, 19, 26, 23, 31, 34, 34, 28])
-    println("SUCESS")
+    println("SUCCESS")
 else
     println("FAILED")
 end =#

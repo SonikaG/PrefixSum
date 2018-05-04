@@ -9,6 +9,10 @@ import "barrier"
 import "sync"
 
 
+// NOTE need to set GOPATH to use barrier
+// export GOPATH="/u/mstager/Concurrency/FinalProject/PrefixSum/implementations"
+
+
 //var result []int64
 
 func aggregate(thread_id int, br *barrier.Barrier, start []int64, end []int64, result []int64){
@@ -27,7 +31,7 @@ func aggregate(thread_id int, br *barrier.Barrier, start []int64, end []int64, r
 }
 
 func fastHelper(thread_id int, wg *sync.WaitGroup, br *barrier.Barrier, result []int64, start []int64, end []int64){
-    prefixSumLinear(result, start[thread_id], end[thread_id])
+    prefixSumLinear(result, start[thread_id], end[thread_id], false)
     br.Before()
     aggregate(thread_id, br, start, end, result)
     wg.Done()
@@ -101,7 +105,7 @@ func prefixSumStride(result []int64, input_size int){
 }
 
 //prefix sum method
-func prefixSumLinear (result []int64, start_index int64, end_index int64) {
+func prefixSumLinear (result []int64, start_index int64, end_index int64, print bool) {
     start := time.Now()
 //  result := make([]int64, input_size)
 //    fmt.Printf("Start: %d and End: %d\n", start_index, end_index)
@@ -111,7 +115,9 @@ func prefixSumLinear (result []int64, start_index int64, end_index int64) {
         }
     }
     elapsed := time.Since(start)
-    fmt.Printf("linear elapsed time: %.9f\n", elapsed.Seconds())
+    if print {
+        fmt.Printf("linear elapsed time: %.9f\n", elapsed.Seconds())
+    }
 }
 
 //function to read the contents of the file
@@ -161,11 +167,11 @@ func main (){
     copy(result, numbers)
 
     if *runType == "linear"{
-        prefixSumLinear(result, 0, (int64)(len(result)-1))
+        prefixSumLinear(result, 0, (int64)(len(result)-1), true)
         //fmt.Println(result)
     }else if *runType == "stride"{
         prefixSumStride(result, len(result))
-        fmt.Println(result)
+        //fmt.Println(result)
     }else if *runType == "fast" {
         prefixSumFast(result, len(result))
         //fmt.Println(result)

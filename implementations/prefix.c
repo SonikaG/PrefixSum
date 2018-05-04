@@ -43,7 +43,7 @@ void printArray (int *input, int input_size){
 //takes the input array and its size as parameters
 //NOT SURE IF THIS WORKS YET
 //__attribute__ ((optimize(1)))
-void prefixSumLinear (int start, int end) {
+void prefixSumLinear (int start, int end, int print) {
 //  printArray(result, input_size);
 //  int *result = malloc(input_size *sizeof(int));
   clock_t start_time = clock();
@@ -55,7 +55,9 @@ void prefixSumLinear (int start, int end) {
   }
   clock_t end_time = clock();
   double elapsed_time = (double)(end_time-start_time)/CLOCKS_PER_SEC;
-  printf("linear elapsed time: %f\n", elapsed_time);
+  if (print){
+    printf("linear elapsed time: %f\n", elapsed_time);
+  }
   return;
 }
 
@@ -79,7 +81,7 @@ void aggregate(int thread_id){
 void * fastHelper(void *arguments){
     int thread_id = *((int*)arguments);
 //    printf("thread %d, start is %d, end is %d, range is %d\n", thread_id, start[thread_id], end[thread_id], end[thread_id] - start[thread_id]+1);
-    prefixSumLinear(start[thread_id], end[thread_id]);
+    prefixSumLinear(start[thread_id], end[thread_id], 0);
     pthread_barrier_wait(&bar);
     //read values from previous chunks to know what correction should be added
     //add the correction to each number
@@ -276,8 +278,8 @@ int main(int argc, char** argv) {
 
 
     if(strcmp(argv[2],"linear") == 0){
-      prefixSumLinear(0, num_points-1);
-      printArray(result, num_points);
+      prefixSumLinear(0, num_points-1, 1);
+//      printArray(result, num_points);
     }
     else if(strcmp(argv[2],"stride") == 0){
       prefixSumStride(values, num_points);

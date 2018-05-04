@@ -14,24 +14,25 @@ goRunCmd = "go run ../implementations/prefix.go -input="
 numRuns = 20
 
 #inputFiles = ["prefix5.txt", "prefix20.txt", "prefix100.txt", "prefix1000.txt", "prefix100000.txt", "prefix1000000.txt", "prefix10000000.txt"]
-inputFiles = ["prefix100000.txt", "prefix1000000.txt", "prefix10000000.txt"]
+# inputFiles = ["prefix100000.txt", "prefix1000000.txt", "prefix10000000.txt"]
+# inputFiles = ["prefix10000000.txt"]
+inputFiles = ["prefix100.txt", "prefix1000.txt", "prefix10000.txt"]
 
 def main():
     run("C LINEAR", cRunCmd, True, "linear")
     run("GO LINEAR", goRunCmd, False, "-type=linear")
-    run("JULIA LINEAR", juliaRunCmd, False, "linear")
+    # run("JULIA LINEAR", juliaRunCmd, False, "linear")
     # todo need to fix timing for fast
-    run("C FAST", cRunCmd, True, "fast")
-    run("GO FAST", goRunCmd, False, "-type=fast")
-
-#    run("C STRIDE", cRunCmd, True, "stride")
- #   run("GO STRIDE", goRunCmd, False, "-type=stride")
+    # run("C FAST", cRunCmd, True, "fast")
+    # run("GO FAST", goRunCmd, False, "-type=fast")
+    run("C STRIDE", cRunCmd, True, "stride")
+    run("GO STRIDE", goRunCmd, False, "-type=stride")
 
 
 
 def get_time(p, lineNum, timePosition):
     output = str(p.stdout, 'utf-8')
-    print(output)
+    # print(output)
     line = output.split("\n")[lineNum]
     #print(output.split("\n")[:-2])
     print(line)

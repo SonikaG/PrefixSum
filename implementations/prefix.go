@@ -39,7 +39,7 @@ func fastHelper(thread_id int, wg *sync.WaitGroup, br *barrier.Barrier, result [
 }
 
 func prefixSumFast(result []int64, input_size int){
-    num_threads := 16;
+    num_threads := 8;
     start_time := time.Now()
     var wg sync.WaitGroup
     br := barrier.New(num_threads)

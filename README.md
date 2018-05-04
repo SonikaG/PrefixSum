@@ -14,6 +14,6 @@ export GOPATH="~/your_path_to/PrefixSum/implementations"
 
 We made a script to create data. It's called makefile. You will need to edit this file to get a new file with X amount of data. The way to do is to add the following line at the end of the file:
 
-createFile(X, <\name of the file you want to create>)
+createFile(X, <name of the file you want to create>)
 
 
